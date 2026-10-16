@@ -40,7 +40,7 @@ in {
     (lib.mkIf (!mutable) {
       programs.neovim = {
         sideloadInitLua = false;
-        initLua = builtins.readFile "${inputs.nix-config}/.config/nvim/init.lua";
+        initLua = builtins.readFile "${inputs.nixconf}/.config/nvim/init.lua";
         plugins = [
           (pkgs.vimPlugins.nvim-treesitter.withPlugins (p:
             with p; [

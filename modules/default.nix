@@ -6,7 +6,7 @@
   hostName,
   ...
 }: let
-  inherit (inputs) nix-config self;
+  inherit (inputs) nixconf self;
   inherit (config.default) user;
 in {
   # --- Global configurations ---
@@ -29,7 +29,7 @@ in {
 
     (lib.optionalAttrs (inputs ? home-manager) {
       home-manager = {
-        users.${user.name}.imports = [nix-config.homeModules.default];
+        users.${user.name}.imports = [nixconf.homeModules.default];
         useGlobalPkgs = lib.mkDefault true;
         useUserPackages = lib.mkDefault true;
 

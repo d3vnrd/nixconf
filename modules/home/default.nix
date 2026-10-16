@@ -1,7 +1,7 @@
 {
   osConfig ?
     throw ''
-      nix-config's Home Manager modules only support the integrated mode
+      nixconf's Home Manager modules only support the integrated mode
       (home-manager.nixosModules or home-manager.darwinModules).
       Standalone `home-manager switch` is not supported: these modules read
       `osConfig` for the hostname and the user, which only exists there.
@@ -11,10 +11,10 @@
   lib,
   ...
 }: let
-  inherit (inputs) nix-config self;
+  inherit (inputs) nixconf self;
 in {
   imports = lib.flatten [
-    (nix-config.lib.utils.existingPathsRelativeTo self [
+    (nixconf.lib.utils.existingPathsRelativeTo self [
       "hosts/${osConfig.networking.hostName}/home.nix"
     ])
 

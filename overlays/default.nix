@@ -3,7 +3,7 @@
   lib,
 }: {
   default = final: prev: {
-    nix-config = prev.lib.packagesFromDirectoryRecursive {
+    nixconf = prev.lib.packagesFromDirectoryRecursive {
       inherit (final) callPackage;
       directory = ../pkgs;
     };

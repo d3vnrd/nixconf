@@ -7,7 +7,7 @@
   ...
 }: let
   inherit
-    (inputs.nix-config.lib.utils)
+    (inputs.nixconf.lib.utils)
     mergeAttrsRecursive
     existingPathsRelativeTo
     ;
@@ -50,7 +50,7 @@ in {
   };
 
   config.default = mergeAttrsRecursive (map import (
-    [inputs.nix-config]
+    [inputs.nixconf]
     ++ (existingPathsRelativeTo inputs.self [
       "default.nix"
       "hosts/${hostName}/default.nix"

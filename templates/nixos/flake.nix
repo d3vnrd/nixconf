@@ -1,8 +1,8 @@
 {
   description = "__DESCRIPTION__";
 
-  outputs = {nix-config, ...} @ inputs:
-    nix-config.lib.mkHostsFlake inputs {
+  outputs = {nixconf, ...} @ inputs:
+    nixconf.lib.mkHostsFlake inputs {
       hosts = {
         __HOSTNAME__ = {
           system = "__SYSTEM__";
@@ -15,9 +15,9 @@
     };
 
   inputs = {
-    nix-config.url = "github:d3vnrd/nix-config";
+    nixconf.url = "github:d3vnrd/nixconf";
 
-    nixpkgs.follows = "nix-config/nixpkgs";
-    home-manager.follows = "nix-config/home-manager";
+    nixpkgs.follows = "nixconf/nixpkgs";
+    home-manager.follows = "nixconf/home-manager";
   };
 }

@@ -1,12 +1,12 @@
 {
   pkgs,
-  nix-config,
+  nixconf,
   ...
 }:
 pkgs.writeShellApplication rec {
   name = "remote-install";
   text = ''
-    source "${nix-config.sh_shared-lib}/lib.sh"
+    source "${nixconf.sh_shared-lib}/lib.sh"
     source "${./lib.sh}"
     ${builtins.readFile ./${name}.sh}
   '';

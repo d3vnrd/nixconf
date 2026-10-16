@@ -5,7 +5,7 @@
   ...
 }: let
   inherit
-    (inputs.nix-config.lib)
+    (inputs.nixconf.lib)
     mkNixosConfigurations
     mkDarwinConfigurations
     supported

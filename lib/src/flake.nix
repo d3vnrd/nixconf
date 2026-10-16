@@ -16,7 +16,7 @@
           specialArgs = {inherit inputs hostName;};
 
           modules = lib.flatten [
-            inputs.nix-config.flakeModules.default
+            inputs.nixconf.flakeModules.default
 
             defaultModule
 
@@ -34,8 +34,8 @@
   errorExample = ''
     For example:
 
-        outputs = inputs@{ nix-config, ... }:
-          nix-config.lib.mkHostsFlake { inherit inputs; } { /* module */ };
+        outputs = inputs@{ nixconf, ... }:
+          nixconf.lib.mkHostsFlake { inherit inputs; } { /* module */ };
 
     Pass the output function arguments as `inputs`. Do not pass
     `self.inputs`, since `inputs` must include `self`.
@@ -45,7 +45,7 @@ in {
     mkConfigurations {
       inherit inputs;
       build = inputs.nixpkgs.lib.nixosSystem;
-      defaultModule = inputs.nix-config.nixosModules.default;
+      defaultModule = inputs.nixconf.nixosModules.default;
     };
 
   mkDarwinConfigurations = inputs:
@@ -56,13 +56,13 @@ in {
           mkDarwinConfigurations: forgot to add nix-darwin in inputs?
         ''
         inputs.nix-darwin.lib.darwinSystem;
-      defaultModule = inputs.nix-config.darwinModules.default;
+      defaultModule = inputs.nixconf.darwinModules.default;
     };
 
   mkHostsFlake = {inputs}: module: let
     eval = lib.evalModules {
       specialArgs = {inherit inputs;};
-      modules = [inputs.nix-config.flakeModules.hosts module];
+      modules = [inputs.nixconf.flakeModules.hosts module];
     };
   in
     lib.throwIf (!inputs ? self) ''

@@ -4,7 +4,7 @@
   outputs = {
     self,
     nixpkgs,
-    nix-config,
+    nixconf,
     nixos-wsl,
     ...
   } @ inputs: let
@@ -15,8 +15,8 @@
     forAllSystems = lib.genAttrs supported;
     forAllSystems' = lib.genAttrs' supported;
   in {
-    nixosConfigurations = nix-config.lib.utils.mergeAttrsNoOverride (let
-      inherit (nix-config.lib) mkNixOsInstaller;
+    nixosConfigurations = nixconf.lib.utils.mergeAttrsNoOverride (let
+      inherit (nixconf.lib) mkNixOsInstaller;
     in [
       (forAllSystems' (system: {
         name = "iso_${system}";
@@ -73,8 +73,8 @@
   };
 
   inputs = {
-    nix-config.url = "github:d3vnrd/nix-config";
-    nixpkgs.follows = "nix-config/nixpkgs";
-    nixos-wsl.follows = "nix-config/nixos-wsl";
+    nixconf.url = "github:d3vnrd/nixconf";
+    nixpkgs.follows = "nixconf/nixpkgs";
+    nixos-wsl.follows = "nixconf/nixos-wsl";
   };
 }

@@ -31,12 +31,12 @@
     # Used by `nix flake init -t <flake>`
     templates = import ./templates lib;
 
-    # Nix-config's exposed modules
+    # Nixconf's exposed modules
     nixosModules = self.lib.recursiveScan ./modules/nixos;
     darwinModules = self.lib.recursiveScan ./modules/darwin;
     homeModules = self.lib.recursiveScan ./modules/home;
 
-    # For nix-config internal use only
+    # For nixconf internal use only
     flakeModules = self.lib.recursiveScan ./modules/flake;
 
     # Executed by `nix flake check`
