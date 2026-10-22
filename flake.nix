@@ -1,60 +1,66 @@
 {
   description = "A modular NixOs system built for the road";
 
-  outputs = {
-    self,
-    nixpkgs,
-    ...
-  } @ inputs: let
-    inherit (nixpkgs) lib;
+  outputs =
+    {
+      self,
+      nixpkgs,
+      ...
+    }@inputs:
+    let
+      inherit (nixpkgs) lib;
 
-    supported = [
-      "x86_64-linux"
-    ];
+      supported = [
+        "x86_64-linux"
+      ];
 
-    forAllSystems = let
-      perSystemPkgs = lib.genAttrs supported (
-        system:
-          import nixpkgs {
-            inherit system;
-            overlays = [self.overlays.default];
-          }
-      );
+      forAllSystems =
+        let
+          perSystemPkgs = lib.genAttrs supported (
+            system:
+            import nixpkgs {
+              inherit system;
+              overlays = [ self.overlays.default ];
+            }
+          );
+        in
+        f: lib.mapAttrs (_: f) perSystemPkgs;
     in
-      f: lib.mapAttrs (_: f) perSystemPkgs;
-  in {
-    lib = import ./lib {inherit lib supported;};
+    {
+      lib = import ./lib { inherit lib supported; };
 
-    # Overlay, consumed by other flakes
-    overlays = import ./overlays {inherit inputs lib;};
+      # Overlay, consumed by other flakes
+      overlays = import ./overlays { inherit inputs lib; };
 
-    # Used by `nix flake init -t <flake>`
-    templates = import ./templates lib;
+      # Used by `nix flake init -t <flake>`
+      templates = import ./templates lib;
 
-    # Nixconf's exposed modules
-    nixosModules = self.lib.recursiveScan ./modules/nixos;
-    darwinModules = self.lib.recursiveScan ./modules/darwin;
-    homeModules = self.lib.recursiveScan ./modules/home;
+      # Nixconf's exposed modules
+      nixosModules = self.lib.recursiveScan ./modules/nixos;
+      darwinModules = self.lib.recursiveScan ./modules/darwin;
+      homeModules = self.lib.recursiveScan ./modules/home;
 
-    # For nixconf internal use only
-    flakeModules = self.lib.recursiveScan ./modules/flake;
+      # For nixconf internal use only
+      flakeModules = self.lib.recursiveScan ./modules/flake;
 
-    # Executed by `nix flake check`
-    checks = forAllSystems (pkgs: import ./checks {inherit inputs lib pkgs;});
+      # Executed by `nix flake check`
+      checks = forAllSystems (pkgs: import ./checks { inherit inputs lib pkgs; });
 
-    # Used by `nix develop .#<name>`
-    devShells = forAllSystems (pkgs: import ./shells pkgs);
+      # Used by `nix develop .#<name>`
+      devShells = forAllSystems (pkgs: import ./shells pkgs);
 
-    # Set formatter used by `nix fmt`
-    formatter = forAllSystems (pkgs: pkgs.nixfmt);
+      # Set formatter used by `nix fmt`
+      formatter = forAllSystems (pkgs: pkgs.nixfmt-tree);
 
-    # Exported package derivations
-    packages = forAllSystems (pkgs:
-      lib.packagesFromDirectoryRecursive {
-        inherit (pkgs) callPackage;
-        directory = ./pkgs;
-      });
-  };
+      # Exported package derivations
+      packages = forAllSystems (
+        pkgs:
+        lib.packagesFromDirectoryRecursive {
+          inherit (pkgs) callPackage;
+          directory = ./pkgs;
+        }
+      );
+    };
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";

@@ -1,17 +1,18 @@
 {
   description = "__DESCRIPTION__";
 
-  outputs = {nixconf, ...} @ inputs:
+  outputs =
+    { nixconf, ... }@inputs:
     nixconf.lib.mkHostsFlake inputs {
       hosts = {
         __HOSTNAME__ = {
           system = "__SYSTEM__";
-          modules = [];
+          modules = [ ];
         };
       };
 
-      checks = pkgs: {};
-      devShells = pkgs: {};
+      checks = pkgs: { };
+      devShells = pkgs: { };
     };
 
   inputs = {

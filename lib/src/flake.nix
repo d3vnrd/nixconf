@@ -1,35 +1,38 @@
-{lib}: let
-  mkConfigurations = {
-    inputs,
-    build,
-    defaultModule,
-  }: hosts:
+{ lib }:
+let
+  mkConfigurations =
+    {
+      inputs,
+      build,
+      defaultModule,
+    }:
+    hosts:
     lib.mapAttrs (
-      hostName: {
+      hostName:
+      {
         system,
-        modules ? [],
+        modules ? [ ],
         ...
       }:
-        build {
-          inherit system;
+      build {
+        inherit system;
 
-          specialArgs = {inherit inputs hostName;};
+        specialArgs = { inherit inputs hostName; };
 
-          modules = lib.flatten [
-            inputs.nixconf.flakeModules.default
+        modules = lib.flatten [
+          inputs.nixconf.flakeModules.default
 
-            defaultModule
+          defaultModule
 
-            (lib.ext.utils.existingPathsRelativeTo inputs.self [
-              "hosts/${hostName}/configuration.nix"
-              "hosts/${hostName}/hardware-configuration.nix"
-            ])
+          (lib.ext.utils.existingPathsRelativeTo inputs.self [
+            "hosts/${hostName}/configuration.nix"
+            "hosts/${hostName}/hardware-configuration.nix"
+          ])
 
-            modules
-          ];
-        }
-    )
-    hosts;
+          modules
+        ];
+      }
+    ) hosts;
 
   errorExample = ''
     For example:
@@ -40,35 +43,41 @@
     Pass the output function arguments as `inputs`. Do not pass
     `self.inputs`, since `inputs` must include `self`.
   '';
-in {
-  mkNixosConfigurations = inputs:
+in
+{
+  mkNixosConfigurations =
+    inputs:
     mkConfigurations {
       inherit inputs;
       build = inputs.nixpkgs.lib.nixosSystem;
       defaultModule = inputs.nixconf.nixosModules.default;
     };
 
-  mkDarwinConfigurations = inputs:
+  mkDarwinConfigurations =
+    inputs:
     mkConfigurations {
       inherit inputs;
-      build =
-        lib.throwIf (!inputs ? nix-darwin) ''
-          mkDarwinConfigurations: forgot to add nix-darwin in inputs?
-        ''
-        inputs.nix-darwin.lib.darwinSystem;
+      build = lib.throwIf (!inputs ? nix-darwin) ''
+        mkDarwinConfigurations: forgot to add nix-darwin in inputs?
+      '' inputs.nix-darwin.lib.darwinSystem;
       defaultModule = inputs.nixconf.darwinModules.default;
     };
 
-  mkHostsFlake = {inputs}: module: let
-    eval = lib.evalModules {
-      specialArgs = {inherit inputs;};
-      modules = [inputs.nixconf.flakeModules.hosts module];
-    };
-  in
+  mkHostsFlake =
+    { inputs }:
+    module:
+    let
+      eval = lib.evalModules {
+        specialArgs = { inherit inputs; };
+        modules = [
+          inputs.nixconf.flakeModules.hosts
+          module
+        ];
+      };
+    in
     lib.throwIf (!inputs ? self) ''
       mkHostsFlake: `inputs` must include `self`.
 
       Please pass the output function arguments. ${errorExample}
-    ''
-    eval.config.outputs;
+    '' eval.config.outputs;
 }

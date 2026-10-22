@@ -1,4 +1,4 @@
-{pkgs}:
+{ pkgs }:
 pkgs.stdenvNoCC.mkDerivation {
   name = "shared-lib";
   src = ./.;

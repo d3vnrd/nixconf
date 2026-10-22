@@ -3,20 +3,19 @@
   inputs,
   lib,
   ...
-}: let
+}:
+let
   inherit (config.default) user;
-in {
+in
+{
   imports = lib.flatten [
     ../.
 
-    (lib.optional (inputs ? home-manager)
-      inputs.home-manager.nixosModules.home-manager)
+    (lib.optional (inputs ? home-manager) inputs.home-manager.nixosModules.home-manager)
 
-    (lib.optional (inputs ? sops-nix)
-      inputs.sops-nix.nixosModules.sops)
+    (lib.optional (inputs ? sops-nix) inputs.sops-nix.nixosModules.sops)
 
-    (lib.optional (inputs ? nixos-wsl)
-      inputs.nixos-wsl.nixosModules.wsl)
+    (lib.optional (inputs ? nixos-wsl) inputs.nixos-wsl.nixosModules.wsl)
   ];
 
   config = {
@@ -25,7 +24,7 @@ in {
     users.users.${user.name} = {
       inherit (user) description;
       isNormalUser = true;
-      extraGroups = ["wheel"];
+      extraGroups = [ "wheel" ];
       openssh.authorizedKeys.keys = user.sshAuthorizedKeys;
     };
 

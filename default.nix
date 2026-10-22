@@ -5,6 +5,6 @@
     email = "";
     description = "Default host's owner";
     initialHashedPassword = "";
-    sshAuthorizedKeys = [];
+    sshAuthorizedKeys = [ ];
   };
 }

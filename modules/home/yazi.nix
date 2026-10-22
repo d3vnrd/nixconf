@@ -1,9 +1,13 @@
-{lib, ...}: {
+{ lib, ... }: {
   programs.yazi = {
     enable = lib.mkDefault true;
     settings = {
       mgr = {
-        ratio = [0 3 5];
+        ratio = [
+          0
+          3
+          5
+        ];
         show_hidden = true;
         sort_by = "extension";
         sort_dir_first = true;

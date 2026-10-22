@@ -5,16 +5,17 @@
   lib,
   pkgs,
   ...
-}: let
-  inherit
-    (inputs.nixconf.lib.utils)
+}:
+let
+  inherit (inputs.nixconf.lib.utils)
     mergeAttrsRecursive
     existingPathsRelativeTo
     ;
   inherit (lib) mkOption types;
 
   inherit (config.default) user;
-in {
+in
+{
   options.default = mkOption {
     type = types.submodule {
       options.user = {
@@ -49,13 +50,15 @@ in {
     readOnly = true;
   };
 
-  config.default = mergeAttrsRecursive (map import (
-    [inputs.nixconf]
-    ++ (existingPathsRelativeTo inputs.self [
-      "default.nix"
-      "hosts/${hostName}/default.nix"
-    ])
-  ));
+  config.default = mergeAttrsRecursive (
+    map import (
+      [ inputs.nixconf ]
+      ++ (existingPathsRelativeTo inputs.self [
+        "default.nix"
+        "hosts/${hostName}/default.nix"
+      ])
+    )
+  );
 
   config.assertions = lib.flatten [
     {
@@ -66,7 +69,7 @@ in {
     }
 
     (lib.optional pkgs.stdenv.hostPlatform.isLinux {
-      assertion = user.sshAuthorizedKeys != [] || user.initialHashedPassword != "";
+      assertion = user.sshAuthorizedKeys != [ ] || user.initialHashedPassword != "";
       message = ''
         default.user needs an SSH key or a hashed password, or the host has no way in.
       '';

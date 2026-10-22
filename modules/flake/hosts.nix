@@ -3,36 +3,41 @@
   inputs,
   lib,
   ...
-}: let
-  inherit
-    (inputs.nixconf.lib)
+}:
+let
+  inherit (inputs.nixconf.lib)
     mkNixosConfigurations
     mkDarwinConfigurations
     supported
     ;
   inherit (lib) mkOption types;
-in {
+in
+{
   options.hosts = mkOption {
     description = "Hosts as name = {system; modules;}.";
 
-    type = types.attrsOf (types.submodule ({config, ...}: {
-      options = {
-        system = mkOption {type = types.enum supported;};
+    type = types.attrsOf (
+      types.submodule (
+        { config, ... }: {
+          options = {
+            system = mkOption { type = types.enum supported; };
 
-        modules = mkOption {
-          type = types.listOf types.raw;
-          default = [];
-        };
+            modules = mkOption {
+              type = types.listOf types.raw;
+              default = [ ];
+            };
 
-        isDarwin = mkOption {
-          type = types.bool;
-          readOnly = true;
-          default = lib.hasSuffix "-darwin" config.system;
-        };
-      };
-    }));
+            isDarwin = mkOption {
+              type = types.bool;
+              readOnly = true;
+              default = lib.hasSuffix "-darwin" config.system;
+            };
+          };
+        }
+      )
+    );
 
-    default = {};
+    default = { };
   };
 
   options.outputs = mkOption {

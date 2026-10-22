@@ -1,26 +1,25 @@
 {
-  osConfig ?
-    throw ''
-      nixconf's Home Manager modules only support the integrated mode
-      (home-manager.nixosModules or home-manager.darwinModules).
-      Standalone `home-manager switch` is not supported: these modules read
-      `osConfig` for the hostname and the user, which only exists there.
-    '',
+  osConfig ? throw ''
+    nixconf's Home Manager modules only support the integrated mode
+    (home-manager.nixosModules or home-manager.darwinModules).
+    Standalone `home-manager switch` is not supported: these modules read
+    `osConfig` for the hostname and the user, which only exists there.
+  '',
   config,
   inputs,
   lib,
   ...
-}: let
+}:
+let
   inherit (inputs) nixconf self;
-in {
+in
+{
   imports = lib.flatten [
     (nixconf.lib.utils.existingPathsRelativeTo self [
       "hosts/${osConfig.networking.hostName}/home.nix"
     ])
 
-    (lib.optional
-      (inputs ? sops-nix)
-      inputs.sops-nix.homeManagerModules.sops)
+    (lib.optional (inputs ? sops-nix) inputs.sops-nix.homeManagerModules.sops)
   ];
 
   options.M.dotfiles = {
@@ -29,7 +28,7 @@ in {
         Repositories to clone, as name = git URL, into defaultPath/<name>.
       '';
       type = lib.types.attrsOf lib.types.str;
-      default = {};
+      default = { };
       example = {
         neovim = "https://github.com/example/neovim-config.git";
         emacs = "https://github.com/example/emacs-config.git";
@@ -47,12 +46,10 @@ in {
 
   config = lib.mkMerge [
     {
-      assertions =
-        lib.mapAttrsToList (name: url: {
-          assertion = url != "";
-          message = "M.dotfiles.fetchFrom.${name}: URL must not be empty.";
-        })
-        config.M.dotfiles.fetchFrom;
+      assertions = lib.mapAttrsToList (name: url: {
+        assertion = url != "";
+        message = "M.dotfiles.fetchFrom.${name}: URL must not be empty.";
+      }) config.M.dotfiles.fetchFrom;
 
       home.stateVersion = lib.mkDefault "26.05";
     }

@@ -4,7 +4,8 @@
   pkgs,
   ...
 }:
-with pkgs; {
+with pkgs;
+{
   home.packages = lib.flatten [
     (lib.optional (config.programs.neovim.enable) [
       # -- LSP --
@@ -12,7 +13,7 @@ with pkgs; {
       lua-language-server
       yaml-language-server
       vscode-css-languageserver
-      nil
+      nixd
       harper
       basedpyright
       tinymist
